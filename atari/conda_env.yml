@@ -20,3 +20,4 @@ dependencies:
   - tqdm
   - blosc
   - git+https://github.com/google/dopamine.git
+  - wandb
