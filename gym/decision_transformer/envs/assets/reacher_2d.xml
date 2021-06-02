@@ -1,0 +1,33 @@
+
+<mujoco model="reacher2d">
+	<compiler angle="radian" inertiafromgeom="true" coordinate="local"/>
+	<default>
+		<joint armature="0.05" damping="1" limited="true"/>
+		<geom friction="1 0.1 0.1" rgba="0.5 0.5 0.7 1" density="1000" condim="1" contype="1" conaffinity="1"/>
+	</default>
+	<option gravity="0 0 0" integrator="RK4" timestep="0.01"/>
+    <worldbody>
+        <light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1"/>
+        <geom name="floor" type="plane" pos="0 0 -0.15" size="2 2 0.1" contype="1" conaffinity="1" rgba="0.7 0.7 0.7 1"/>
+        <geom name="root" type="capsule" fromto="0 0 -0.1 0 0 0.1" size="0.1"/>
+        <body name="shoulder" pos="0 0 -0.075" axisangle="0 0 1 0.785">
+            <!-- <joint name="shoulder" type="hinge" pos="0 0 0" axis="0 0 1" range="-3.14 3.14" damping="1.0" /> -->
+            <joint name="shoulder" type="hinge" pos="0 0 0" axis="0 0 1" limited="false" damping="1.0" />
+            <geom name="shoulder" type="capsule"  fromto="0 0 0 0.6 0 0" size="0.05" contype="1" conaffinity="1"/>
+            <body name="elbow" pos="0.6 0 0" axisangle="0 0 1 -0.785">
+                <joint name="elbow" type="hinge" pos="0 0 0" axis="0 0 1" range="-2.0 3.5" damping="1.0"/>
+                <geom name="elbow" type="capsule"  fromto="0 0 0 0.4 0 0" size="0.05" contype="1" conaffinity="1"/>
+                <site rgba="0.6 0.3 0.3 1" type="sphere" pos="0.45 0 0" size="0.05" name="fingertip"/>
+            </body>
+        </body>
+
+        <body name="target" pos="-0.5 0 -0.1">
+            <geom rgba="0.4 0.7 0.4 1" type="cylinder" size="0.1 0.05 0.05" contype="0" conaffinity="0"/>
+        </body>
+    </worldbody>
+
+    <actuator>
+        <motor joint="shoulder" ctrlrange="-1 1" ctrllimited="true" gear="1"/>
+        <motor joint="elbow" ctrlrange="-1 1" ctrllimited="true" gear="1"/>
+    </actuator>
+</mujoco>

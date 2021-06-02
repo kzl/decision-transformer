@@ -1,0 +1,22 @@
+name: decision-transformer-atari
+channels:
+- pytorch
+dependencies:
+- python=3.7.9
+- pytorch=1.2
+- cudatoolkit=10.
+- numpy
+- psutil
+- opencv
+- pip
+- pip:
+  - atari-py
+  - pyprind
+  - tensorflow-gpu>=1.13
+  - absl-py
+  - atari-py
+  - gin-config
+  - gym
+  - tqdm
+  - blosc
+  - git+https://github.com/google/dopamine.git
