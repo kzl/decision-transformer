@@ -5,7 +5,7 @@ Lili Chen\*, Kevin Lu\*, Aravind Rajeswaran, Kimin Lee, Aditya Grover, Michael L
 
 \*equal contribution, †equal advising
 
-A link to our arXiv paper can be found [here](https://arxiv.org/abs/2106.01345).
+A link to our paper can be found on [arXiv](https://arxiv.org/abs/2106.01345).
 
 ## Overview
 
