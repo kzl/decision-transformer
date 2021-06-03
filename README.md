@@ -28,7 +28,7 @@ Please cite our paper as:
 @article{chen2021decisiontransformer,
   title={Decision Transformer: Reinforcement Learning via Sequence Modeling},
   author={Lili Chen and Kevin Lu and Aravind Rajeswaran and Kimin Lee and Aditya Grover and Michael Laskin and Pieter Abbeel and Aravind Srinivas and Igor Mordatch},
-  journal={arXiv preprint},
+  journal={arXiv preprint arXiv:2106.01345},
   year={2021}
 }
 ```
