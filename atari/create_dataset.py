@@ -16,7 +16,6 @@ import random
 import torch
 import pickle
 import blosc
-import wandb
 import argparse
 from fixed_replay_buffer import FixedReplayBuffer
 
