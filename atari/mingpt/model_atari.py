@@ -211,7 +211,7 @@ class GPT(nn.Module):
         # idx: (batch, block_size, 4, 84, 84)
         # actions: (batch, block_size, 1)
         # targets: (batch, block_size, 1)
-        # rtgs: (batch, block_size)
+        # rtgs: (batch, block_size, 1)
         # timesteps: (batch, block_size, 1)
         state = idx.reshape(-1, 4, 84, 84) # (batch * block_size, 4, 84, 84)
 
