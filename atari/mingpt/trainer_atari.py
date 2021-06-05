@@ -175,7 +175,7 @@ class Trainer:
             rtgs = [ret]
             # first state is from env, first rtg is target return, and first timestep is 0
             sampled_action = sample(self.model.module, state, 1, temperature=1.0, sample=True, actions=None, 
-                rtgs=torch.tensor(rtgs, dtype=torch.long).to(self.device).unsqueeze(0).unsqueeze(1), 
+                rtgs=torch.tensor(rtgs, dtype=torch.long).to(self.device).unsqueeze(0).unsqueeze(-1), 
                 timesteps=torch.zeros((1, 1, 1), dtype=torch.int64).to(self.device))
 
             j = 0
@@ -203,7 +203,7 @@ class Trainer:
                 # timestep is just current timestep
                 sampled_action = sample(self.model.module, all_states.unsqueeze(0), 1, temperature=1.0, sample=True, 
                     actions=torch.tensor(actions, dtype=torch.long).to(self.device).unsqueeze(1).unsqueeze(0), 
-                    rtgs=torch.tensor(rtgs, dtype=torch.long).to(self.device).unsqueeze(0).unsqueeze(1), 
+                    rtgs=torch.tensor(rtgs, dtype=torch.long).to(self.device).unsqueeze(0).unsqueeze(-1), 
                     timesteps=(min(j, self.config.max_timestep) * torch.ones((1, 1, 1), dtype=torch.int64).to(self.device)))
         env.close()
         eval_return = sum(T_rewards)/10.
