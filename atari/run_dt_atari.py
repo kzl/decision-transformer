@@ -37,13 +37,13 @@ set_seed(args.seed)
 
 class StateActionReturnDataset(Dataset):
 
-    def __init__(self, data, block_size, actions=None, done_idxs=None, rtg=None, timesteps=None):        
+    def __init__(self, data, block_size, actions, done_idxs, rtgs, timesteps):        
         self.block_size = block_size
         self.vocab_size = max(actions) + 1
         self.data = data
         self.actions = actions
         self.done_idxs = done_idxs
-        self.rtg = rtg
+        self.rtgs = rtgs
         self.timesteps = timesteps
     
     def __len__(self):
@@ -60,12 +60,12 @@ class StateActionReturnDataset(Dataset):
         states = torch.tensor(np.array(self.data[idx:done_idx]), dtype=torch.float32).reshape(block_size, -1) # (block_size, 4*84*84)
         states = states / 255.
         actions = torch.tensor(self.actions[idx:done_idx], dtype=torch.long).unsqueeze(1) # (block_size, 1)
-        rtg = torch.tensor(self.rtg[idx:done_idx], dtype=torch.float32).unsqueeze(1)
+        rtgs = torch.tensor(self.rtgs[idx:done_idx], dtype=torch.float32).unsqueeze(1)
         timesteps = torch.tensor(self.timesteps[idx:idx+1], dtype=torch.int64).unsqueeze(1)
 
-        return states, actions, rtg, timesteps
+        return states, actions, rtgs, timesteps
 
-obss, actions, returns, done_idxs, rtg, timesteps = create_dataset(args.num_buffers, args.num_steps, args.game, args.data_dir_prefix, args.trajectories_per_buffer)
+obss, actions, returns, done_idxs, rtgs, timesteps = create_dataset(args.num_buffers, args.num_steps, args.game, args.data_dir_prefix, args.trajectories_per_buffer)
 
 # set up logging
 logging.basicConfig(
@@ -74,7 +74,7 @@ logging.basicConfig(
         level=logging.INFO,
 )
 
-train_dataset = StateActionReturnDataset(obss, args.context_length, actions=actions, done_idxs=done_idxs, rtg=rtg, timesteps=timesteps)
+train_dataset = StateActionReturnDataset(obss, args.context_length*3, actions, done_idxs, rtgs, timesteps)
 
 mconf = GPTConfig(train_dataset.vocab_size, train_dataset.block_size,
                   n_layer=6, n_head=8, n_embd=128, model_type=args.model_type, max_timestep=max(timesteps))
@@ -83,7 +83,7 @@ model = GPT(mconf)
 # initialize a trainer instance and kick off training
 epochs = args.epochs
 tconf = TrainerConfig(max_epochs=epochs, batch_size=args.batch_size, learning_rate=6e-4,
-                      lr_decay=True, warmup_tokens=512*20, final_tokens=2*len(train_dataset)*args.block_size,
+                      lr_decay=True, warmup_tokens=512*20, final_tokens=2*len(train_dataset)*args.context_length*3,
                       num_workers=4, seed=args.seed, model_type=args.model_type, game=args.game, max_timestep=max(timesteps))
 trainer = Trainer(model, train_dataset, None, tconf)
 

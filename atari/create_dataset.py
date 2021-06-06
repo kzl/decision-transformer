@@ -27,7 +27,7 @@ def create_dataset(num_buffers, num_steps, game, data_dir_prefix, trajectories_p
     done_idxs = []
     stepwise_returns = []
 
-    transitions_per_buffer = np.zeros(num_buffers, dtype=int)
+    transitions_per_buffer = np.zeros(50, dtype=int)
     num_trajectories = 0
     while len(obss) < num_steps:
         buffer_num = np.random.choice(np.arange(50 - num_buffers, 50), 1)[0]
@@ -65,7 +65,7 @@ def create_dataset(num_buffers, num_steps, game, data_dir_prefix, trajectories_p
                 if i >= 1000000:
                     obss = obss[:curr_num_transitions]
                     actions = actions[:curr_num_transitions]
-                    stepwise_returns = actions[:curr_num_transitions]
+                    stepwise_returns = stepwise_returns[:curr_num_transitions]
                     returns[-1] = 0
                     i = transitions_per_buffer[buffer_num]
                     done = True
