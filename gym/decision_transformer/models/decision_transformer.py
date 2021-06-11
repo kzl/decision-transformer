@@ -33,6 +33,8 @@ class DecisionTransformer(TrajectoryModel):
             **kwargs
         )
 
+        # note: the only difference between this GPT2Model and the default Huggingface version
+        # is that the positional embeddings are removed (since we'll add those ourselves)
         self.transformer = GPT2Model(config)
 
         self.embed_timestep = nn.Embedding(max_ep_len, hidden_size)
@@ -87,14 +89,14 @@ class DecisionTransformer(TrajectoryModel):
         )
         x = transformer_outputs['last_hidden_state']
 
-        # reshape x so that the second dimension corresponds to
-        # predicting returns (0), actions (1), or states (2)
+        # reshape x so that the second dimension corresponds to the original
+        # returns (0), actions (1), or states (2); i.e. x[:,1,t] is the token for a_t
         x = x.reshape(batch_size, seq_length, 3, self.hidden_size).permute(0, 2, 1, 3)
 
         # get predictions
-        return_preds = self.predict_return(x[:,0])
-        state_preds = self.predict_state(x[:,2])
-        action_preds = self.predict_action(x[:,1])
+        return_preds = self.predict_return(x[:,2])  # predict next return given state and action
+        state_preds = self.predict_state(x[:,2])    # predict next state given state and action
+        action_preds = self.predict_action(x[:,1])  # predict next action given state
 
         return state_preds, action_preds, return_preds
 
@@ -112,11 +114,15 @@ class DecisionTransformer(TrajectoryModel):
             returns_to_go = returns_to_go[:,-self.max_length:]
             timesteps = timesteps[:,-self.max_length:]
 
-            # padding
+            # pad all tokens to sequence length
             attention_mask = torch.cat([torch.zeros(self.max_length-states.shape[1]), torch.ones(states.shape[1])])
             attention_mask = attention_mask.to(dtype=torch.long, device=states.device).reshape(1, -1)
             states = torch.cat(
                 [torch.zeros((states.shape[0], self.max_length-states.shape[1], self.state_dim), device=states.device), states],
+                dim=1).to(dtype=torch.float32)
+            actions = torch.cat(
+                [torch.zeros((actions.shape[0], self.max_length - actions.shape[1], self.act_dim),
+                             device=actions.device), actions],
                 dim=1).to(dtype=torch.float32)
             returns_to_go = torch.cat(
                 [torch.zeros((returns_to_go.shape[0], self.max_length-returns_to_go.shape[1], 1), device=returns_to_go.device), returns_to_go],
@@ -125,13 +131,10 @@ class DecisionTransformer(TrajectoryModel):
                 [torch.zeros((timesteps.shape[0], self.max_length-timesteps.shape[1]), device=timesteps.device), timesteps],
                 dim=1
             ).to(dtype=torch.long)
-
-            actions = torch.cat(
-                [torch.zeros((actions.shape[0], self.max_length-actions.shape[1], self.act_dim), device=actions.device), actions],
-                dim=1).to(dtype=torch.float32)
         else:
             attention_mask = None
 
-        _, action_preds, return_preds = self.forward(states, actions, None, returns_to_go, timesteps, attention_mask=attention_mask, **kwargs)
+        _, action_preds, return_preds = self.forward(
+            states, actions, None, returns_to_go, timesteps, attention_mask=attention_mask, **kwargs)
 
         return action_preds[0,-1]
