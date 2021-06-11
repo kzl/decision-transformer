@@ -90,7 +90,7 @@ class DecisionTransformer(TrajectoryModel):
         x = transformer_outputs['last_hidden_state']
 
         # reshape x so that the second dimension corresponds to the original
-        # returns (0), actions (1), or states (2); i.e. x[:,1,t] is the token for a_t
+        # returns (0), states (1), or actions (2); i.e. x[:,1,t] is the token for s_t
         x = x.reshape(batch_size, seq_length, 3, self.hidden_size).permute(0, 2, 1, 3)
 
         # get predictions
