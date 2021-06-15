@@ -29,7 +29,7 @@ parser.add_argument('--num_buffers', type=int, default=50)
 parser.add_argument('--game', type=str, default='Breakout')
 parser.add_argument('--batch_size', type=int, default=128)
 # 
-parser.add_argument('--trajectories_per_buffer', type=int, default=1, help='Number of trajectories to sample from each of the buffers.')
+parser.add_argument('--trajectories_per_buffer', type=int, default=10, help='Number of trajectories to sample from each of the buffers.')
 parser.add_argument('--data_dir_prefix', type=str, default='./dqn_replay/')
 args = parser.parse_args()
 

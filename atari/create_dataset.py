@@ -42,7 +42,7 @@ def create_dataset(num_buffers, num_steps, game, data_dir_prefix, trajectories_p
             gamma=0.99,
             observation_dtype=np.uint8,
             batch_size=32,
-            replay_capacity=1000000)
+            replay_capacity=100000)
         if frb._loaded_buffers:
             done = False
             curr_num_transitions = len(obss)
@@ -62,7 +62,7 @@ def create_dataset(num_buffers, num_steps, game, data_dir_prefix, trajectories_p
                         trajectories_to_load -= 1
                 returns[-1] += ret[0]
                 i += 1
-                if i >= 1000000:
+                if i >= 100000:
                     obss = obss[:curr_num_transitions]
                     actions = actions[:curr_num_transitions]
                     stepwise_returns = stepwise_returns[:curr_num_transitions]
