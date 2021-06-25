@@ -34,3 +34,7 @@ Please cite our paper as:
 ```
 
 Note: this is not an official Google or Facebook product.
+
+## License
+
+MIT
