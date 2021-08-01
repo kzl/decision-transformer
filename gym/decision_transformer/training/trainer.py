@@ -66,9 +66,10 @@ class Trainer:
             states, actions, rewards, masks=None, attention_mask=attention_mask, target_return=returns,
         )
 
+        # note: currently indexing & masking is not fully correct
         loss = self.loss_fn(
             state_preds, action_preds, reward_preds,
-            state_target, action_target, reward_target,
+            state_target[:,1:], action_target, reward_target[:,1:],
         )
         self.optimizer.zero_grad()
         loss.backward()
