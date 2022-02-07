@@ -106,7 +106,7 @@ def experiment(
     num_trajectories = 1
     timesteps = traj_lens[sorted_inds[-1]]
     ind = len(trajectories) - 2
-    while ind >= 0 and timesteps + traj_lens[sorted_inds[ind]] < num_timesteps:
+    while ind >= 0 and timesteps + traj_lens[sorted_inds[ind]] <= num_timesteps:
         timesteps += traj_lens[sorted_inds[ind]]
         num_trajectories += 1
         ind -= 1
