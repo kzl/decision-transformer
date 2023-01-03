@@ -7,6 +7,7 @@ import argparse
 import pickle
 import random
 import sys
+import transformers
 
 from decision_transformer.evaluation.evaluate_episodes import evaluate_episode, evaluate_episode_rtg
 from decision_transformer.models.decision_transformer import DecisionTransformer
@@ -82,9 +83,15 @@ def experiment(
         returns.append(path['rewards'].sum())
     traj_lens, returns = np.array(traj_lens), np.array(returns)
 
+    #print(f'States shape: {len(states)}\tStates: {states}')
+
+
     # used for input normalization
     states = np.concatenate(states, axis=0)
+    #print(f'--------------------\n{states.shape}\n-------------')
     state_mean, state_std = np.mean(states, axis=0), np.std(states, axis=0) + 1e-6
+    #print(f'state mean: {state_mean}\tstate_std: {state_std}')
+
 
     num_timesteps = sum(traj_lens)
 
@@ -102,7 +109,7 @@ def experiment(
 
     # only train on top pct_traj trajectories (for %BC experiment)
     num_timesteps = max(int(pct_traj*num_timesteps), 1)
-    sorted_inds = np.argsort(returns)  # lowest to highest
+    sorted_inds = np.argsort(returns)  # lowest to highestal
     num_trajectories = 1
     timesteps = traj_lens[sorted_inds[-1]]
     ind = len(trajectories) - 2
@@ -133,6 +140,7 @@ def experiment(
             a.append(traj['actions'][si:si + max_len].reshape(1, -1, act_dim))
             r.append(traj['rewards'][si:si + max_len].reshape(1, -1, 1))
             if 'terminals' in traj:
+    
                 d.append(traj['terminals'][si:si + max_len].reshape(1, -1))
             else:
                 d.append(traj['dones'][si:si + max_len].reshape(1, -1))
@@ -275,9 +283,13 @@ def experiment(
         # wandb.watch(model)  # wandb has some bug
 
     for iter in range(variant['max_iters']):
-        outputs = trainer.train_iteration(num_steps=variant['num_steps_per_iter'], iter_num=iter+1, print_logs=True)
+        outputs,model_o = trainer.train_iteration(num_steps=variant['num_steps_per_iter'], iter_num=iter+1, print_logs=True)
         if log_to_wandb:
             wandb.log(outputs)
+
+    #Need to add for multiple
+    #Add check if file exists and ups the counter
+    torch.save(model_o,f'saved/{env_name}-{dataset}-v2.pt')
 
 
 if __name__ == '__main__':

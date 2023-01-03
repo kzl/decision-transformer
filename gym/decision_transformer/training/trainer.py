@@ -56,7 +56,7 @@ class Trainer:
             for k, v in logs.items():
                 print(f'{k}: {v}')
 
-        return logs
+        return logs,self.model
 
     def train_step(self):
         states, actions, rewards, dones, attention_mask, returns = self.get_batch(self.batch_size)

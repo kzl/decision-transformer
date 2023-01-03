@@ -1,0 +1,13 @@
+/data
+*.json
+*.csv
+*.excel
+*.pkl
+*.txt
+*.npy
+/ev
+/gym
+/mt
+/vis10
+/data10
+*.png
