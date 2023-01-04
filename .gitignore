@@ -6,8 +6,9 @@
 *.txt
 *.npy
 /ev
-/gym
 /mt
 /vis10
+gym/pyenv
+gym/saved
 /data10
 *.png
