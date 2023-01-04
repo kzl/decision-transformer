@@ -65,11 +65,13 @@ class DecisionTransformer(TrajectoryModel):
     def forward(self, states, actions, rewards, returns_to_go, timesteps, attention_mask=None):
 
         batch_size, seq_length = states.shape[0], states.shape[1]
+        self.state_dim = states.shape[2]
+        self.act_dim = actions.shape[2]
 
         if attention_mask is None:
             # attention mask for GPT: 1 if can be attended to, 0 if not
             attention_mask = torch.ones((batch_size, seq_length), dtype=torch.long)
-        if self.state_dim == 17:
+        if states.shape[2] == 17:
             #states = self.lin_in17(states)
             #states = self.m(states)
             # try:
@@ -118,7 +120,7 @@ class DecisionTransformer(TrajectoryModel):
         # get predictions
         return_preds = self.predict_return(x[:,2])  # predict next return given state and action
         state_preds = self.predict_state(x[:,2])    # predict next state given state and action
-        if self.state_dim == 17:
+        if states.shape[2]== 17:
             action_preds = self.predict_action_w(x[:,1])  # predict next action given state  
         else:
             action_preds = self.predict_action_h(x[:,1])
