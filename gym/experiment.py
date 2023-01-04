@@ -286,10 +286,11 @@ def experiment(
         outputs,model_o = trainer.train_iteration(num_steps=variant['num_steps_per_iter'], iter_num=iter+1, print_logs=True)
         if log_to_wandb:
             wandb.log(outputs)
-
+ 
     #Need to add for multiple
     #Add check if file exists and ups the counter
-    torch.save(model_o,f'saved/{env_name}-{dataset}-v2.pt')
+    name = variant['name']
+    torch.save(model_o,f'saved/{env_name}-{dataset}-{name}v2.pt')
 
 
 if __name__ == '__main__':
@@ -314,6 +315,7 @@ if __name__ == '__main__':
     parser.add_argument('--num_steps_per_iter', type=int, default=10000)
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--log_to_wandb', '-w', type=bool, default=False)
+    parser.add_argument('--name',type=str,default=None)
     
     args = parser.parse_args()
 
