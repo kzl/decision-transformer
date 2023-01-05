@@ -30,6 +30,7 @@ class Trainer:
         self.model.train()
         for _ in range(num_steps):
             train_loss = self.train_step()
+            train_loss = self.train_step2()
             train_losses.append(train_loss)
             if self.scheduler is not None:
                 self.scheduler.step()
@@ -37,9 +38,30 @@ class Trainer:
         logs['time/training'] = time.time() - train_start
 
         eval_start = time.time()
+        print('-------')
+        print('Iteration Complete '+ str(iter_num) )
 
         self.model.eval()
         for eval_fn in self.eval_fns:
+            outputs = eval_fn(self.model)
+            for k, v in outputs.items():
+                logs[f'evaluation/{k}'] = v
+
+        logs['time/total'] = time.time() - self.start_time
+        logs['time/evaluation'] = time.time() - eval_start
+        logs['training/train_loss_mean'] = np.mean(train_losses)
+        logs['training/train_loss_std'] = np.std(train_losses)
+
+        for k in self.diagnostics:
+            logs[k] = self.diagnostics[k]
+
+        if print_logs:
+            print('=' * 80)
+            print(f'Iteration {iter_num}')
+            for k, v in logs.items():
+                print(f'{k}: {v}')
+
+        for eval_fn in self.eval_fns2:
             outputs = eval_fn(self.model)
             for k, v in outputs.items():
                 logs[f'evaluation/{k}'] = v

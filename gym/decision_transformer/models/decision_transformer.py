@@ -39,13 +39,13 @@ class DecisionTransformer(TrajectoryModel):
 
         self.embed_timestep = nn.Embedding(max_ep_len, hidden_size)
         self.embed_return = torch.nn.Linear(1, hidden_size)
-        self.embed_state = torch.nn.Linear(17, hidden_size)
+        self.embed_state = torch.nn.Linear(11, hidden_size)
         self.embed_action = torch.nn.Linear(6, hidden_size)
 
         self.embed_ln = nn.LayerNorm(hidden_size)
 
         # note: we don't predict states or returns for the paper
-        self.predict_state = torch.nn.Linear(hidden_size, 17)
+        self.predict_state = torch.nn.Linear(hidden_size, 11)
         self.predict_action_h = nn.Sequential(
             *([nn.Linear(hidden_size, 3)] + ([nn.Tanh()] if action_tanh else []))
         )
@@ -72,13 +72,13 @@ class DecisionTransformer(TrajectoryModel):
             # attention mask for GPT: 1 if can be attended to, 0 if not
             attention_mask = torch.ones((batch_size, seq_length), dtype=torch.long)
         if states.shape[2] == 17:
-            #states = self.lin_in17(states)
-            #states = self.m(states)
+            states = self.lin_in17(states)
+            # states = self.m(states)
             # try:
             #     states = states.reshape(64,20,11)
             # except:
             #     states = states.reshape(1,20,11)
-            pass
+            #pass
         else:
             #states = self.lin_in11(states)
             actions = self.lin_in_out11(actions)
@@ -120,7 +120,7 @@ class DecisionTransformer(TrajectoryModel):
         # get predictions
         return_preds = self.predict_return(x[:,2])  # predict next return given state and action
         state_preds = self.predict_state(x[:,2])    # predict next state given state and action
-        if states.shape[2]== 17:
+        if self.state_dim== 17:
             action_preds = self.predict_action_w(x[:,1])  # predict next action given state  
         else:
             action_preds = self.predict_action_h(x[:,1])
@@ -136,7 +136,7 @@ class DecisionTransformer(TrajectoryModel):
 
     def get_action(self, states, actions, rewards, returns_to_go, timesteps, **kwargs):
         # we don't care about the past rewards in this model
-
+        self.state_dim, self.act_dim = states.shape[1],actions.shape[1]
         states = states.reshape(1, -1, self.state_dim)
         actions = actions.reshape(1, -1, self.act_dim)
         returns_to_go = returns_to_go.reshape(1, -1, 1)
