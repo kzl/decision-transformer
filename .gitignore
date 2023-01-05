@@ -10,5 +10,7 @@
 /vis10
 gym/pyenv
 gym/saved
+gym_dual/pyenv
+gym_dual/saved
 /data10
 *.png
