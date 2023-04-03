@@ -72,32 +72,40 @@ class DecisionTransformer(TrajectoryModel):
 
         # this makes the sequence look like (R_1, s_1, a_1, R_2, s_2, a_2, ...)
         # which works nice in an autoregressive sense since states predict actions
+        #check_1 = torch.stack(
+        #    (returns_embeddings, state_embeddings, action_embeddings), dim=1
+        #) # 64 x 3 x 20 x 128
+        #check_2 = torch.stack(
+        #    (returns_embeddings, state_embeddings, action_embeddings), dim=1
+        #).permute(0, 2, 1, 3) # 64 x 20 x 3 x 128
         stacked_inputs = torch.stack(
             (returns_embeddings, state_embeddings, action_embeddings), dim=1
-        ).permute(0, 2, 1, 3).reshape(batch_size, 3*seq_length, self.hidden_size)
+        ).permute(0, 2, 1, 3).reshape(batch_size, 3*seq_length, self.hidden_size) # 64 x 60 x 128
         stacked_inputs = self.embed_ln(stacked_inputs)
 
         # to make the attention mask fit the stacked inputs, have to stack it as well
         stacked_attention_mask = torch.stack(
             (attention_mask, attention_mask, attention_mask), dim=1
-        ).permute(0, 2, 1).reshape(batch_size, 3*seq_length)
+        ).permute(0, 2, 1).reshape(batch_size, 3*seq_length) # 64 x 60
 
+        # jesnk : this parts is weird.
         # we feed in the input embeddings (not word indices as in NLP) to the model
         transformer_outputs = self.transformer(
             inputs_embeds=stacked_inputs,
             attention_mask=stacked_attention_mask,
         )
-        x = transformer_outputs['last_hidden_state']
-
+        x = transformer_outputs['last_hidden_state'] # 64 x 60 x 128
         # reshape x so that the second dimension corresponds to the original
         # returns (0), states (1), or actions (2); i.e. x[:,1,t] is the token for s_t
-        x = x.reshape(batch_size, seq_length, 3, self.hidden_size).permute(0, 2, 1, 3)
+        x = x.reshape(batch_size, seq_length, 3, self.hidden_size).permute(0, 2, 1, 3)        # x shape : 64, 3, 20, 128
 
         # get predictions
+        # x[:,2] shape : 64, 20, 128
+        # return_preds shape : 64, 20, 1
         return_preds = self.predict_return(x[:,2])  # predict next return given state and action
         state_preds = self.predict_state(x[:,2])    # predict next state given state and action
         action_preds = self.predict_action(x[:,1])  # predict next action given state
-
+        # jesnk : this part does not make sense.
         return state_preds, action_preds, return_preds
 
     def get_action(self, states, actions, rewards, returns_to_go, timesteps, **kwargs):

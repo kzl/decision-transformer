@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-
+from decision_transformer.models.decision_transformer import DecisionTransformer
 
 def evaluate_episode(
         env,
@@ -66,7 +66,7 @@ def evaluate_episode_rtg(
         env,
         state_dim,
         act_dim,
-        model,
+        model: DecisionTransformer, #jesnk
         max_ep_len=1000,
         scale=1000.,
         state_mean=0.,
