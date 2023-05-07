@@ -1,3 +1,5 @@
+import os.path
+
 import numpy as np
 import torch
 
@@ -32,3 +34,6 @@ class SequenceTrainer(Trainer):
             self.diagnostics['training/action_error'] = torch.mean((action_preds-action_target)**2).detach().cpu().item()
 
         return loss.detach().cpu().item()
+
+    def save_para(self, state_dict, path="saved_para/", iter="unknown"):
+        torch.save(state_dict, path + "/iter_%s.pt" % (str(iter)))

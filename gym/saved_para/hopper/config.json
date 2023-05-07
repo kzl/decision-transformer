@@ -1,0 +1,22 @@
+{
+  "env": "hopper",
+  "dataset": "medium",
+  "mode": "normal",
+  "K": 20,
+  "pct_traj": 1.0,
+  "batch_size": 64,
+  "model_type": "dt",
+  "embed_dim": 128,
+  "n_layer": 3,
+  "n_head": 1,
+  "activation_function": "relu",
+  "dropout": 0.1,
+  "learning_rate": 0.0001,
+  "weight_decay": 0.0001,
+  "warmup_steps": 10000,
+  "num_eval_episodes": 100,
+  "max_iters": 10,
+  "num_steps_per_iter": 10000,
+  "device": "cuda",
+  "log_to_wandb": false
+}

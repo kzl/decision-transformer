@@ -2,11 +2,12 @@ import gym
 import numpy as np
 import torch
 import wandb
+import json
 
 import argparse
 import pickle
 import random
-import sys
+import sys, os, os.path
 
 from decision_transformer.evaluation.evaluate_episodes import evaluate_episode, evaluate_episode_rtg
 from decision_transformer.models.decision_transformer import DecisionTransformer
@@ -273,8 +274,15 @@ def experiment(
             config=variant
         )
         # wandb.watch(model)  # wandb has some bug
+    sys.path.append(os.getcwd())
+    save_path = r"saved_para/%s"%(variant["env"])
+    if not os.path.exists(save_path):
+        os.mkdir(save_path)
 
+    with open('%s/config.json'%(save_path), 'w') as fp:
+        json.dump(variant, fp)
     for iter in range(variant['max_iters']):
+        trainer.save_para(model.state_dict(), path=save_path, iter=iter)
         outputs = trainer.train_iteration(num_steps=variant['num_steps_per_iter'], iter_num=iter+1, print_logs=True)
         if log_to_wandb:
             wandb.log(outputs)
@@ -306,3 +314,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     experiment('gym-experiment', variant=vars(args))
+

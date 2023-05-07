@@ -2,9 +2,9 @@ name: decision-transformer-gym
 channels:
 - pytorch
 dependencies:
-- python=3.8.5
+- python=3.8
 - anaconda
-- cudatoolkit=10.
+#- cudatoolkit=10.
 - numpy
 - pip
 - pip:
