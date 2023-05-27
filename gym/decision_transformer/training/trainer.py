@@ -22,7 +22,6 @@ class Trainer:
 
         train_losses = []
         logs = dict()
-
         train_start = time.time()
 
         self.model.train()
@@ -33,7 +32,6 @@ class Trainer:
                 self.scheduler.step()
 
         logs['time/training'] = time.time() - train_start
-
         eval_start = time.time()
 
         self.model.eval()
@@ -86,7 +84,6 @@ class Trainer:
             outputs = eval_fn(self.model)
             for k, v in outputs.items():
                 logs[f'evaluation/{k}'] = v
-        # print(logs)
 
         logs['time/total'] = time.time() - self.start_time
         logs['time/evaluation'] = time.time() - eval_start

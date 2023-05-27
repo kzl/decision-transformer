@@ -52,7 +52,6 @@ class DecisionTransformer(TrajectoryModel):
         self.predict_return = torch.nn.Linear(hidden_size, 1)
 
     def forward(self, states, actions, rewards, returns_to_go, timesteps, attention_mask=None):
-
         batch_size, seq_length = states.shape[0], states.shape[1]
 
         if attention_mask is None:
@@ -89,8 +88,16 @@ class DecisionTransformer(TrajectoryModel):
         )
         x = transformer_outputs['last_hidden_state']
 
+        # for k, v in transformer_outputs.items():
+        #     # print(k, type(v))
+        #     if type(v) == tuple:
+        #         print(k, v[0].detach().numpy().shape)
+        #     else:
+        #         print(k, v.detach().numpy().shape)
+
         # reshape x so that the second dimension corresponds to the original
         # returns (0), states (1), or actions (2); i.e. x[:,1,t] is the token for s_t
+        # 64, 20, 3, 128  -->>  64, 3, 20, 128
         x = x.reshape(batch_size, seq_length, 3, self.hidden_size).permute(0, 2, 1, 3)
 
         # get predictions
@@ -125,7 +132,7 @@ class DecisionTransformer(TrajectoryModel):
                              device=actions.device), actions],
                 dim=1).to(dtype=torch.float32)
             returns_to_go = torch.cat(
-                [torch.zeros((returns_to_go.shape[0], self.max_length-returns_to_go.shape[1], 1), device=returns_to_go.device), returns_to_go],
+                [torch.zeros((returns_to_go.shape[0], self.max_length-returns_to_go.shape[1], 1) , device=returns_to_go.device), returns_to_go],
                 dim=1).to(dtype=torch.float32)
             timesteps = torch.cat(
                 [torch.zeros((timesteps.shape[0], self.max_length-timesteps.shape[1]), device=timesteps.device), timesteps],

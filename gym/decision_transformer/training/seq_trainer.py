@@ -10,6 +10,12 @@ class SequenceTrainer(Trainer):
 
     def train_step(self):
         states, actions, rewards, dones, rtg, timesteps, attention_mask = self.get_batch(self.batch_size)
+        # for ind, val in enumerate([states, actions, rewards, dones, rtg, timesteps, attention_mask]):
+        #     print(ind, val)
+
+        # print(len(rtg))
+        # print(rtg.shape)
+
         action_target = torch.clone(actions)
 
         state_preds, action_preds, reward_preds = self.model.forward(
@@ -19,6 +25,9 @@ class SequenceTrainer(Trainer):
         act_dim = action_preds.shape[2]
         action_preds = action_preds.reshape(-1, act_dim)[attention_mask.reshape(-1) > 0]
         action_target = action_target.reshape(-1, act_dim)[attention_mask.reshape(-1) > 0]
+
+        # print("action_preds: ", action_preds)
+        # print("action_target: ", action_target)
 
         loss = self.loss_fn(
             None, action_preds, None,

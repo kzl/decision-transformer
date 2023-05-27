@@ -1,0 +1,21 @@
+#python eval.py --device cuda --model_type cql --env hopper --dataset medium --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+python eval.py --device cuda --model_type cqlR --env hopper --dataset medium --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+python eval.py --device cuda --model_type cqlR2 --env hopper --dataset medium --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+#python eval.py --device cuda --model_type cql --env walker2d --dataset medium --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+python eval.py --device cuda --model_type cqlR --env walker2d --dataset medium --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+python eval.py --device cuda --model_type cqlR2 --env walker2d --dataset medium --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+#python eval.py --device cuda --model_type cql --env halfcheetah --dataset medium --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+python eval.py --device cuda --model_type cqlR --env halfcheetah --dataset medium --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+python eval.py --device cuda --model_type cqlR2 --env halfcheetah --dataset medium --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+#python eval.py --device cuda --model_type cql --env hopper --dataset expert --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+python eval.py --device cuda --model_type cqlR --env hopper --dataset expert --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+python eval.py --device cuda --model_type cqlR2 --env hopper --dataset expert --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+#python eval.py --device cuda --model_type cql --env walker2d --dataset expert --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+python eval.py --device cuda --model_type cqlR --env walker2d --dataset expert --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+python eval.py --device cuda --model_type cqlR2 --env walker2d --dataset expert --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+#python eval.py --device cuda --model_type cql --env walker2d --dataset medium-replay --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+python eval.py --device cuda --model_type cqlR --env walker2d --dataset medium-replay --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+python eval.py --device cuda --model_type cqlR2 --env walker2d --dataset medium-replay --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+#python eval.py --device cuda --model_type cql --env halfcheetah --dataset medium-replay --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+python eval.py --device cuda --model_type cqlR --env halfcheetah --dataset medium-replay --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries ; sleep 1;
+python eval.py --device cuda --model_type cqlR2 --env halfcheetah --dataset medium-replay --mode normal --using_specified_iter_para 300 --num_eval_episodes 10 --eval_results_file_name cqlSeries
