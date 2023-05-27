@@ -210,6 +210,7 @@ class Attention(nn.Module):
             use_cache=False,
             output_attentions=False,
     ):
+
         if encoder_hidden_states is not None:
             assert hasattr(
                 self, "q_attn"

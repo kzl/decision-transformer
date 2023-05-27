@@ -22,7 +22,6 @@ class Trainer:
 
         train_losses = []
         logs = dict()
-
         train_start = time.time()
 
         self.model.train()
@@ -33,7 +32,6 @@ class Trainer:
                 self.scheduler.step()
 
         logs['time/training'] = time.time() - train_start
-
         eval_start = time.time()
 
         self.model.eval()
@@ -76,3 +74,27 @@ class Trainer:
         self.optimizer.step()
 
         return loss.detach().cpu().item()
+
+    def eval_para(self, print_logs=False):
+        logs = dict()
+
+        eval_start = time.time()
+        self.model.eval()
+        for eval_fn in self.eval_fns:
+            outputs = eval_fn(self.model)
+            for k, v in outputs.items():
+                logs[f'evaluation/{k}'] = v
+
+        logs['time/total'] = time.time() - self.start_time
+        logs['time/evaluation'] = time.time() - eval_start
+
+        for k in self.diagnostics:
+            logs[k] = self.diagnostics[k]
+
+        if print_logs:
+            print('=' * 80)
+            # print(f'Iteration {iter_num}')
+            for k, v in logs.items():
+                print(f'{k}: {v}')
+
+        return logs

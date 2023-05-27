@@ -9,12 +9,12 @@ def evaluate_episode(
         model,
         max_ep_len=1000,
         device='cuda',
-        target_return=None,
+        target_return=0,
         mode='normal',
         state_mean=0.,
         state_std=1.,
 ):
-
+    print("i am in")
     model.eval()
     model.to(device=device)
 
