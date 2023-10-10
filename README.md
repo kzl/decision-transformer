@@ -17,7 +17,7 @@ Contains scripts to reproduce experiments.
 ## Instructions
 
 We provide code in two sub-directories: `atari` containing code for Atari experiments and `gym` containing code for OpenAI Gym experiments.
-See corresponding READMEs in each folder for instructions; scripts should be run from the respective directories.
+**See corresponding READMEs in each folder for instructions**; scripts should be run from the respective directories.
 It may be necessary to add the respective directories to your PYTHONPATH.
 
 ## Citation

@@ -2,7 +2,7 @@
 
 import collections
 from concurrent import futures
-from dopamine.replay_memory import circular_replay_buffer
+from dopamine.replay_memory import circular_replay_buffer  # https://github.com/google/dopamine
 import numpy as np
 import tensorflow.compat.v1 as tf
 import gin

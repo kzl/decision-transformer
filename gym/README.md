@@ -10,6 +10,8 @@ Then, dependencies can be installed with the following command:
 ```
 conda env create -f conda_env.yml
 ```
+Directly running the above command is not working (a lot of things is broken, recommend to install one by one, and using the package version shown in yml)
+
 
 ## Downloading datasets
 

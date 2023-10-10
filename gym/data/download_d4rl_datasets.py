@@ -11,7 +11,8 @@ datasets = []
 
 for env_name in ['halfcheetah', 'hopper', 'walker2d']:
 	for dataset_type in ['medium', 'medium-replay', 'expert']:
-		name = f'{env_name}-{dataset_type}-v2'
+		name = f"{env_name}-{dataset_type}-v2"
+		print(name)
 		env = gym.make(name)
 		dataset = env.get_dataset()
 
