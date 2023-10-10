@@ -90,6 +90,8 @@ class Trainer:
             losses = []
             pbar = tqdm(enumerate(loader), total=len(loader)) if is_train else enumerate(loader)
             for it, (x, y, r, t) in pbar:
+                # TODO: we want to do some policy improvement in the training loop, the dataloader needs to be change to random policy
+                # TODO: we want next_state (multi-step in the future) from the DecisionTransformer
 
                 # place data on the correct device
                 x = x.to(self.device)
