@@ -72,30 +72,32 @@ def experiment(
         env_targets = env_targets[:1]  # since BC ignores target, no need for different evaluations
 
     if env_name == 'boyan13':
-        state_dim = 13
-        act_dim = 2
+        state_dim = 1  # the dimension of each state; in Boyan chain, we only have 1, which is the state number
+        act_dim = 1    # the dimension of action is just 1 (jump or right)
     else:
         state_dim = env.observation_space.shape[0]
         act_dim = env.action_space.shape[0]
 
     # load dataset
-    dataset_path = f'data/{env_name}-{dataset}-v2.pkl'
-    with open(dataset_path, 'rb') as f:
-        trajectories = pickle.load(f)
+    if __debug__:
+        print("==== DEBUG ON ====")
+        with open('/home/mitacs/github/decision-transformer/gym/data/boyan13-medium-v2.pkl', 'rb') as f:
+        # with open('/home/mitacs/github/decision-transformer/gym/data/hopper-medium-v2.pkl', 'rb') as f:
+            trajectories = pickle.load(f)
+    else:
+        print("==== DEBUG OFF ====")
+        dataset_path = f'data/{env_name}-{dataset}-v2.pkl'
+        with open(dataset_path, 'rb') as f:
+            trajectories = pickle.load(f)
 
     # save all path information into separate lists
     mode = variant.get('mode', 'normal')
     states, traj_lens, returns = [], [], []
 
-    # TODO: for testing; limiting trajectories length
-    # print(len(trajectories))
-    # print(trajectories[0])
-    trajectories = trajectories[:2]
-
     for path in trajectories:
         if mode == 'delayed':  # delayed: all rewards moved to end of trajectory
             path['rewards'][-1] = path['rewards'].sum()
-            path['rewards'][:-1] = 0.
+            path['rewards'][:-1] = 0.0
         states.append(path['observations'])
         traj_lens.append(len(path['observations']))
         returns.append(path['rewards'].sum())
@@ -134,6 +136,7 @@ def experiment(
     # used to reweight sampling so we sample according to timesteps instead of trajectories
     p_sample = traj_lens[sorted_inds] / sum(traj_lens[sorted_inds])
 
+    # TODO: YQ: K is the sequence length; boyan-chain sequence might be too short 
     def get_batch(batch_size=256, max_len=K):
         batch_inds = np.random.choice(
             np.arange(num_trajectories),
@@ -145,12 +148,16 @@ def experiment(
         s, a, r, d, rtg, timesteps, mask = [], [], [], [], [], [], []
         for i in range(batch_size):
             traj = trajectories[int(sorted_inds[batch_inds[i]])]
+            
+            # YQ: state_index? randomly choose a state; they are using rewards to check because they have observations but not states
             si = random.randint(0, traj['rewards'].shape[0] - 1)
 
             # get sequences from dataset
+            # https://stackoverflow.com/questions/18691084/what-does-1-mean-in-numpy-reshape
             s.append(traj['observations'][si:si + max_len].reshape(1, -1, state_dim))
             a.append(traj['actions'][si:si + max_len].reshape(1, -1, act_dim))
             r.append(traj['rewards'][si:si + max_len].reshape(1, -1, 1))
+
             if 'terminals' in traj:
                 d.append(traj['terminals'][si:si + max_len].reshape(1, -1))
             else:
@@ -304,7 +311,7 @@ if __name__ == '__main__':
     parser.add_argument('--env', type=str, default='hopper')
     parser.add_argument('--dataset', type=str, default='medium')  # medium, medium-replay, medium-expert, expert
     parser.add_argument('--mode', type=str, default='normal')  # normal for standard setting, delayed for sparse
-    parser.add_argument('--K', type=int, default=20)
+    parser.add_argument('--K', type=int, default=20)    # YQ: sequence length (paper pg. 5)
     parser.add_argument('--pct_traj', type=float, default=1.)
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--model_type', type=str, default='dt')  # dt for decision transformer, bc for behavior cloning
