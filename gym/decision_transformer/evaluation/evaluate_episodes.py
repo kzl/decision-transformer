@@ -29,7 +29,6 @@ def evaluate_episode(
     actions = torch.zeros((0, act_dim), device=device, dtype=torch.float32)
     rewards = torch.zeros(0, device=device, dtype=torch.float32)
     target_return = torch.tensor(target_return, device=device, dtype=torch.float32)
-    sim_states = []
 
     episode_return, episode_length = 0, 0
     for t in range(max_ep_len):
@@ -83,6 +82,10 @@ def evaluate_episode_rtg(
     state_std = torch.from_numpy(state_std).to(device=device)
 
     state = env.reset()
+    if state_dim == 1 and act_dim == 1:
+        # print("DEBUG: this is boyan-chain env")
+        state = np.array([12])
+
     if mode == 'noise':
         state = state + np.random.normal(0, 0.1, size=state.shape)
 
@@ -95,8 +98,6 @@ def evaluate_episode_rtg(
     ep_return = target_return
     target_return = torch.tensor(ep_return, device=device, dtype=torch.float32).reshape(1, 1)
     timesteps = torch.tensor(0, device=device, dtype=torch.long).reshape(1, 1)
-
-    sim_states = []
 
     episode_return, episode_length = 0, 0
     for t in range(max_ep_len):
@@ -115,7 +116,11 @@ def evaluate_episode_rtg(
         actions[-1] = action
         action = action.detach().cpu().numpy()
 
-        state, reward, done, _ = env.step(action)
+        if state_dim == 1 and act_dim == 1:
+            state, reward, done = env.step(action)
+            state = np.array([state])
+        else:
+            state, reward, done, _ = env.step(action)
 
         cur_state = torch.from_numpy(state).to(device=device).reshape(1, state_dim)
         states = torch.cat([states, cur_state], dim=0)
