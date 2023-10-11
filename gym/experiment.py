@@ -28,6 +28,8 @@ def experiment(
         variant,
 ):
     device = variant.get('device', 'cuda')
+    # print(device) https://github.com/pytorch/pytorch/issues/45028#issuecomment-1057774346
+    # pip3 install torch==1.9.0+cu111 torchvision==0.10.0+cu111 torchaudio==0.9.0 -f https://download.pytorch.org/whl/torch_stable.html
     log_to_wandb = variant.get('log_to_wandb', False)
 
     env_name, dataset = variant['env'], variant['dataset']
@@ -37,8 +39,9 @@ def experiment(
 
     if env_name == 'hopper':
         env = gym.make('Hopper-v3')
-        max_ep_len = 1000
-        env_targets = [3600, 1800]  # evaluation conditioning targets
+        # max_ep_len = 1000
+        max_ep_len = 5
+        env_targets = [3600, 1800]  # evaluation conditioning targets   # TODO:this means on every 3600/1000 and 1800/1000 steps, there is a sample?
         scale = 1000.  # normalization for rewards/returns
     elif env_name == 'halfcheetah':
         env = gym.make('HalfCheetah-v3')
@@ -73,6 +76,12 @@ def experiment(
     # save all path information into separate lists
     mode = variant.get('mode', 'normal')
     states, traj_lens, returns = [], [], []
+
+    # TODO: for testing; limiting trajectories length
+    # print(len(trajectories))
+    # print(trajectories[0])
+    trajectories = trajectories[:2]
+
     for path in trajectories:
         if mode == 'delayed':  # delayed: all rewards moved to end of trajectory
             path['rewards'][-1] = path['rewards'].sum()
@@ -98,7 +107,7 @@ def experiment(
     K = variant['K']
     batch_size = variant['batch_size']
     num_eval_episodes = variant['num_eval_episodes']
-    pct_traj = variant.get('pct_traj', 1.)
+    pct_traj = variant.get('pct_traj', 1.)      # pct = percentile; used in PBC (%BC), Percentile Behavior Cloning
 
     # only train on top pct_traj trajectories (for %BC experiment)
     num_timesteps = max(int(pct_traj*num_timesteps), 1)
@@ -305,4 +314,6 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
 
+    print("start experiment")
     experiment('gym-experiment', variant=vars(args))
+    print("end of experiment")
