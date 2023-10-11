@@ -21,37 +21,37 @@ np.set_printoptions(threshold=sys.maxsize)
 class Boyan13():
     def __init__(self):
         self.num_states:int = 13
-        self.state:int = 12 # starting with the leftmost state 12
+        self.curr_state:int = 12 # starting with the leftmost state 12
 
     def get_state(self) -> int:
-        return self.state
+        return self.curr_state
 
     def reset(self) -> None:
-        self.state = 12
+        self.curr_state = 12
 
     def step(self, action:int):
-        if self.state == 0:
+        if self.curr_state == 0:
             print("BOYAN-ENV Error: No action should be taken at state 0... Exiting now.")
             exit()
 
         reward = -3
         terminal = False
 
-        if action == JUMP and self.state <= 1:
+        if action == JUMP and self.curr_state <= 1:
             print("BOYAN-ENV Error: JUMP action is unavailable in state 1... Exiting now.")
             exit()
 
         if action == RIGHT:
-            if self.state == 1:
+            if self.curr_state == 1:
                 reward = -2
-            self.state = self.state - 1
+            self.curr_state = self.curr_state - 1
         elif action == JUMP:
-            self.state = self.state - 2
+            self.curr_state = self.curr_state - 2
 
-        if self.state == 0:
+        if self.curr_state == 0:
             terminal = True
 
-        return (reward, self.state, terminal)
+        return (reward, self.curr_state, terminal)
 
     def get_exact_value_function(self):
         # using Bellman equation

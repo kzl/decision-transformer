@@ -8,6 +8,7 @@ import pickle
 import random
 import sys
 
+from decision_transformer.envs.boyanchain_13 import Boyan13
 from decision_transformer.evaluation.evaluate_episodes import evaluate_episode, evaluate_episode_rtg
 from decision_transformer.models.decision_transformer import DecisionTransformer
 from decision_transformer.models.mlp_bc import MLPBCModel
@@ -43,6 +44,11 @@ def experiment(
         max_ep_len = 5
         env_targets = [3600, 1800]  # evaluation conditioning targets   # TODO:this means on every 3600/1000 and 1800/1000 steps, there is a sample?
         scale = 1000.  # normalization for rewards/returns
+    elif env_name == 'boyan13':
+        env = Boyan13()
+        max_ep_len = 5
+        env_targets = [4000, 2000]
+        scale = 1000.0
     elif env_name == 'halfcheetah':
         env = gym.make('HalfCheetah-v3')
         max_ep_len = 1000
@@ -65,8 +71,12 @@ def experiment(
     if model_type == 'bc':
         env_targets = env_targets[:1]  # since BC ignores target, no need for different evaluations
 
-    state_dim = env.observation_space.shape[0]
-    act_dim = env.action_space.shape[0]
+    if env_name == 'boyan13':
+        state_dim = 13
+        act_dim = 2
+    else:
+        state_dim = env.observation_space.shape[0]
+        act_dim = env.action_space.shape[0]
 
     # load dataset
     dataset_path = f'data/{env_name}-{dataset}-v2.pkl'

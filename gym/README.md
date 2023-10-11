@@ -23,6 +23,12 @@ Then, run the following script in order to download the datasets and save them i
 python download_d4rl_datasets.py
 ```
 
+For *Boyan Chain* (13 states) environment, run
+
+```
+python fake_data.py
+```
+
 ## Example usage
 
 Experiments can be reproduced with the following:
