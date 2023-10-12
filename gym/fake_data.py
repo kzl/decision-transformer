@@ -62,19 +62,20 @@ def generate_trajectory(jump_prob: float):
 
 
 if __name__ == "__main__":
-    test_output()
+    # test_output()
 
-    NUM_TRAJ = 10
-    JUMP_PROB = 0.7
+    NUM_TRAJ = 1000
+    JUMP_PROB = 0.5
     OUTPUT_FILE = './data/boyan13-medium-v2.pkl'
 
     output_trajs = []
     for _ in range(NUM_TRAJ):
         traj = generate_trajectory(jump_prob=JUMP_PROB)
-        print(traj)
+        # print(traj)
         # print(traj['rewards'].shape[0])
         output_trajs.append(traj)
 
+    print("\n Writing fake data (boyan13)...\n")
     with open(OUTPUT_FILE, 'wb') as handle:
         pickle.dump(output_trajs, handle, protocol=pickle.HIGHEST_PROTOCOL)
 

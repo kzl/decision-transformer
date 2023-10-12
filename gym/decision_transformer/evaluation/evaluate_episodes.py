@@ -118,6 +118,7 @@ def evaluate_episode_rtg(
 
         if state_dim == 1 and act_dim == 1:
             state, reward, done = env.step(action)
+            # print(state, reward, done)  # state, reward, done = -3, 12, False
             state = np.array([state])
         else:
             state, reward, done, _ = env.step(action)
@@ -135,11 +136,12 @@ def evaluate_episode_rtg(
         timesteps = torch.cat(
             [timesteps,
              torch.ones((1, 1), device=device, dtype=torch.long) * (t+1)], dim=1)
-
+        # print(reward)   # TODO: BUG: why the reward is 12?? shouldn't be positive
         episode_return += reward
         episode_length += 1
 
         if done:
             break
-
+    # TODO: BUG: episode_return all are the same
+    # print(episode_return)
     return episode_return, episode_length

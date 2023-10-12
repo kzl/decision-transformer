@@ -30,6 +30,9 @@ class Boyan13():
         self.curr_state = 12
 
     def step(self, action:int):
+        """https://www.gymlibrary.dev/content/environment_creation/#step
+        return observation, reward, terminated, False, info
+        """
         if self.curr_state == 0:
             print("BOYAN-ENV Error: No action should be taken at state 0... Exiting now.")
             exit()
@@ -51,7 +54,7 @@ class Boyan13():
         if self.curr_state == 0:
             terminal = True
 
-        return (reward, self.curr_state, terminal)
+        return (self.curr_state, reward, terminal)
 
     def get_exact_value_function(self):
         # using Bellman equation
