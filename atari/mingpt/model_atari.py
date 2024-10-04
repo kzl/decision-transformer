@@ -265,7 +265,7 @@ class GPT(nn.Module):
         if actions is not None and self.model_type == 'reward_conditioned':
             logits = logits[:, 1::3, :] # only keep predictions from state_embeddings
         elif actions is None and self.model_type == 'reward_conditioned':
-            logits = logits[:, 1:, :]
+            logits = logits[:, 1::2, :]
         elif actions is not None and self.model_type == 'naive':
             logits = logits[:, ::2, :] # only keep predictions from state_embeddings
         elif actions is None and self.model_type == 'naive':
